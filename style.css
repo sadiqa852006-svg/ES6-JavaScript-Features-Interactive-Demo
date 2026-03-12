@@ -1,0 +1,174 @@
+*{
+box-sizing:border-box;
+margin:0;
+padding:0;
+}
+
+body{
+background:#0a0a0f;
+color:#e8e8f0;
+font-family:'Syne',sans-serif;
+line-height:1.6;
+}
+
+nav{
+position:fixed;
+top:0;
+left:0;
+right:0;
+background:#111118;
+padding:15px 30px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+border-bottom:1px solid #2a2a3a;
+}
+
+.nav-logo{
+color:#00f5c4;
+font-weight:800;
+}
+
+.nav-links{
+display:flex;
+gap:20px;
+list-style:none;
+}
+
+.nav-links a{
+text-decoration:none;
+color:#6b6b80;
+font-size:14px;
+}
+
+.hero{
+min-height:100vh;
+display:flex;
+flex-direction:column;
+justify-content:center;
+align-items:center;
+text-align:center;
+padding:100px 20px;
+}
+
+.hero h1{
+font-size:60px;
+font-weight:800;
+}
+
+.hl{
+color:#00f5c4;
+}
+
+.hl2{
+color:#7b61ff;
+}
+
+.hero-sub{
+color:#6b6b80;
+max-width:500px;
+margin-top:20px;
+}
+
+.hero-chips{
+display:flex;
+flex-wrap:wrap;
+gap:10px;
+margin-top:20px;
+}
+
+.chip{
+border:1px solid #2a2a3a;
+padding:5px 12px;
+border-radius:20px;
+font-size:12px;
+}
+
+.section{
+max-width:1000px;
+margin:auto;
+padding:80px 20px;
+}
+
+.section-title{
+font-size:32px;
+margin-bottom:10px;
+}
+
+.section-desc{
+color:#6b6b80;
+margin-bottom:20px;
+}
+
+.output-box{
+background:#111118;
+border:1px solid #2a2a3a;
+padding:15px;
+border-radius:8px;
+margin-top:10px;
+}
+
+.run-btn{
+margin-top:10px;
+padding:8px 20px;
+border:none;
+background:#00f5c4;
+cursor:pointer;
+font-weight:bold;
+}
+
+.promise-flow{
+display:flex;
+align-items:center;
+gap:10px;
+margin-bottom:20px;
+}
+
+.p-node{
+border:1px solid #2a2a3a;
+padding:10px;
+border-radius:6px;
+font-size:12px;
+}
+
+.timeline{
+margin:20px 0;
+}
+
+.tl-step{
+border:1px solid #2a2a3a;
+padding:10px;
+margin-bottom:10px;
+border-radius:6px;
+}
+
+.tl-builder{
+margin-top:20px;
+}
+
+.tl-inputs{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:10px;
+}
+
+.tl-input{
+padding:10px;
+border:1px solid #2a2a3a;
+background:#111118;
+color:white;
+}
+
+.tl-result{
+margin-top:10px;
+padding:15px;
+background:#111118;
+border:1px solid #2a2a3a;
+}
+
+footer{
+text-align:center;
+padding:40px;
+color:#6b6b80;
+border-top:1px solid #2a2a3a;
+}

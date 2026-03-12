@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>ES6 Features — Advanced JavaScript</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<!-- NAV -->
+<nav>
+<div class="nav-logo">ES<span>6</span>.js</div>
+
+<ul class="nav-links">
+<li><a href="#arrow">Arrow Fn</a></li>
+<li><a href="#promises">Promises</a></li>
+<li><a href="#async">Async/Await</a></li>
+<li><a href="#destruct">Destruct</a></li>
+<li><a href="#modules">Modules</a></li>
+<li><a href="#template">Template</a></li>
+</ul>
+
+<span class="nav-badge">ES2015+</span>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+<p class="hero-tag">Advanced JavaScript</p>
+
+<h1>
+Modern <span class="hl">ES6</span><br>
+<span class="hl2">Features</span> Showcase
+</h1>
+
+<p class="hero-sub">
+An interactive guide to ECMAScript 2015+ — live demos, code examples, and visual explanations.
+</p>
+
+<div class="hero-chips">
+<span class="chip">Arrow Functions</span>
+<span class="chip">Promises</span>
+<span class="chip">Async / Await</span>
+<span class="chip">Destructuring</span>
+<span class="chip">Modules</span>
+<span class="chip">Template Literals</span>
+</div>
+
+<p class="hero-scroll">↓ scroll to explore</p>
+</section>
+
+
+<!-- ARROW FUNCTIONS -->
+<section class="section reveal" id="arrow">
+
+<p class="section-label">Feature 01</p>
+<h2 class="section-title">Arrow Functions</h2>
+
+<p class="section-desc">
+Concise syntax for function expressions with lexical <code>this</code>.
+</p>
+
+<div class="output-box" id="arrow-out">Click Run to see output...</div>
+<button class="run-btn" onclick="runArrow()">▶ Run</button>
+
+</section>
+
+
+<!-- PROMISES -->
+<section class="section reveal" id="promises">
+
+<p class="section-label">Feature 02</p>
+<h2 class="section-title">Promises</h2>
+
+<div class="promise-flow">
+
+<div class="p-node pending" id="pn1">⏳ Pending</div>
+<div class="p-arrow">→</div>
+<div class="p-node" id="pn2">✅ Fulfilled</div>
+<div class="p-arrow">→</div>
+<div class="p-node" id="pn3">❌ Rejected</div>
+
+</div>
+
+<div class="output-box" id="promise-out">
+Click to simulate a Promise...
+</div>
+
+<button class="run-btn" onclick="runPromise()">
+▶ Simulate Promise
+</button>
+
+</section>
+
+
+<!-- ASYNC AWAIT -->
+<section class="section reveal" id="async">
+
+<p class="section-label">Feature 03</p>
+<h2 class="section-title">Async / Await</h2>
+
+<div class="timeline">
+
+<div class="tl-step" id="step1">1. Fetch user...</div>
+<div class="tl-step" id="step2">2. Fetch posts...</div>
+<div class="tl-step" id="step3">3. Fetch comments...</div>
+<div class="tl-step" id="step4">4. Done</div>
+
+</div>
+
+<button class="run-btn" onclick="runAsync()">
+▶ Run Async Flow
+</button>
+
+</section>
+
+
+<!-- DESTRUCTURING -->
+<section class="section reveal" id="destruct">
+
+<p class="section-label">Feature 04</p>
+<h2 class="section-title">Destructuring</h2>
+
+<div class="output-box" id="destruct-out">
+Click to destructure...
+</div>
+
+<button class="run-btn" onclick="runDestruct()">
+▶ Run Demo
+</button>
+
+</section>
+
+
+<!-- TEMPLATE LITERALS -->
+<section class="section reveal" id="template">
+
+<p class="section-label">Feature 06</p>
+<h2 class="section-title">Template Literals</h2>
+
+<div class="tl-builder">
+
+<div class="tl-inputs">
+
+<input class="tl-input" id="tl-name" placeholder="Your name" oninput="updateTemplate()" value="Alex">
+
+<input class="tl-input" id="tl-role" placeholder="Your role" oninput="updateTemplate()" value="Developer">
+
+<input class="tl-input" id="tl-lang" placeholder="Fav language" oninput="updateTemplate()" value="JavaScript">
+
+<input class="tl-input" id="tl-year" placeholder="Year" oninput="updateTemplate()" value="2025">
+
+</div>
+
+<div class="tl-result" id="tl-result"></div>
+
+</div>
+
+</section>
+
+
+<footer>
+<p>
+ES6 Features Showcase · Arrow Functions · Promises · Async/Await · Destructuring · Modules · Template Literals
+</p>
+</footer>
+
+<script src="script.js"></script>
+
+</body>
+</html>
