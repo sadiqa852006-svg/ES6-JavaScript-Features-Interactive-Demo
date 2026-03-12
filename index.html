@@ -1,176 +1,720 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ES6 Features — Advanced JavaScript</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-<title>ES6 Features — Advanced JavaScript</title>
+    :root {
+      --bg: #0a0a0f;
+      --surface: #111118;
+      --card: #16161f;
+      --border: #2a2a3a;
+      --accent1: #00f5c4;
+      --accent2: #7b61ff;
+      --accent3: #ff6b6b;
+      --accent4: #ffd166;
+      --accent5: #06d6a0;
+      --text: #e8e8f0;
+      --muted: #6b6b80;
+      --font-mono: 'Space Mono', monospace;
+      --font-display: 'Syne', sans-serif;
+    }
 
-<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
+    html { scroll-behavior: smooth; }
 
-<link rel="stylesheet" href="style.css">
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-display);
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
+
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image:
+        linear-gradient(rgba(0,245,196,.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,245,196,.04) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none; z-index: 0;
+    }
+
+    /* NAV */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem 2rem;
+      background: rgba(10,10,15,.88);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo { font-size: 1.1rem; font-weight: 800; color: var(--accent1); }
+    .nav-logo span { color: var(--text); }
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      list-style: none;
+    }
+    .nav-links a { color: var(--muted); text-decoration: none; font-size: .82rem; font-family: var(--font-mono); transition: color .2s; }
+    .nav-links a:hover { color: var(--accent1); }
+    .nav-badge { font-family: var(--font-mono); font-size: .72rem; background: var(--accent2); color: #fff; padding: .25rem .75rem; border-radius: 99px; }
+
+    /* HERO */
+    .hero {
+      position: relative; z-index: 1;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 6rem 2rem 4rem;
+    }
+    .hero-tag { font-family: var(--font-mono); font-size: .72rem; color: var(--accent1); letter-spacing: 3px; text-transform: uppercase; margin-bottom: 1.5rem; animation: fadeUp .6s ease both; }
+    .hero h1 { font-size: clamp(2.5rem, 7vw, 5.5rem); font-weight: 800; line-height: 1.05; letter-spacing: -2px; animation: fadeUp .6s .1s ease both; }
+    .hero h1 .hl  { color: var(--accent1); }
+    .hero h1 .hl2 { color: var(--accent2); }
+    .hero-sub { margin-top: 1.5rem; max-width: 560px; color: var(--muted); font-size: 1rem; animation: fadeUp .6s .2s ease both; }
+    .hero-chips {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: .6rem;
+      margin-top: 2rem;
+      animation: fadeUp .6s .3s ease both;
+    }
+    .chip { font-family: var(--font-mono); font-size: .72rem; padding: .35rem .85rem; border-radius: 99px; border: 1px solid var(--border); background: var(--card); color: var(--text); cursor: pointer; transition: all .2s; }
+    .chip:hover { border-color: var(--accent1); color: var(--accent1); transform: translateY(-2px); }
+    .hero-scroll { margin-top: 3rem; font-family: var(--font-mono); font-size: .72rem; color: var(--muted); animation: bounce 2s infinite; }
+
+    /* SECTION */
+    .section {
+      position: relative; z-index: 1;
+      max-width: 1100px; margin: 0 auto;
+      padding: 5rem 1.5rem;
+    }
+    .section-header {
+      display: flex;
+      flex-direction: column;
+      gap: .4rem;
+      margin-bottom: 2.5rem;
+    }
+    .section-label { font-family: var(--font-mono); font-size: .7rem; color: var(--accent2); letter-spacing: 3px; text-transform: uppercase; }
+    .section-title { font-size: clamp(1.6rem, 4vw, 2.5rem); font-weight: 800; letter-spacing: -1px; }
+    .section-desc  { color: var(--muted); max-width: 600px; }
+
+    /* CARD ROW — Flexbox */
+    .card-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.25rem;
+    }
+    .card {
+      flex: 1 1 300px;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.75rem;
+      transition: border-color .25s, transform .25s;
+    }
+    .card:hover { border-color: var(--accent1); transform: translateY(-4px); }
+    .card.full   { flex: 1 1 100%; }
+    .card-icon  { font-size: 1.4rem; margin-bottom: .9rem; }
+    .card-title { font-size: 1rem; font-weight: 700; margin-bottom: .35rem; }
+    .card-desc  { font-size: .84rem; color: var(--muted); margin-bottom: 1rem; }
+    .card .run-btn { margin-top: auto; }
+
+    /* CODE BLOCK */
+    .code-block {
+      background: #0d0d14; border: 1px solid var(--border); border-radius: 8px;
+      padding: 1rem 1.25rem; font-family: var(--font-mono); font-size: .74rem;
+      line-height: 1.75; overflow-x: auto; white-space: pre; flex: 1;
+    }
+    .kw  { color: #c792ea; }
+    .fn  { color: #82aaff; }
+    .str { color: #c3e88d; }
+    .cm  { color: #546e7a; font-style: italic; }
+    .num { color: #f78c6c; }
+    .op  { color: var(--accent1); }
+
+    /* BUTTON */
+    .run-btn {
+      display: inline-flex; align-items: center; gap: .5rem;
+      margin-top: 1rem; padding: .55rem 1.25rem;
+      background: var(--accent1); color: #000;
+      font-family: var(--font-mono); font-size: .8rem; font-weight: 700;
+      border: none; border-radius: 6px; cursor: pointer; transition: opacity .2s;
+      align-self: flex-start;
+    }
+    .run-btn:hover { opacity: .82; }
+
+    /* OUTPUT */
+    .output-box {
+      margin-top: .75rem; padding: 1rem;
+      background: #0a0a0f; border: 1px solid var(--border); border-radius: 8px;
+      font-family: var(--font-mono); font-size: .78rem; color: var(--accent5);
+      min-height: 60px; white-space: pre-wrap;
+    }
+
+    /* PROMISE FLOW */
+    .promise-flow {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: .75rem;
+      margin-bottom: 1.5rem;
+    }
+    .p-node {
+      flex: 1 1 120px; text-align: center; padding: .8rem;
+      border-radius: 8px; border: 1px solid var(--border);
+      font-family: var(--font-mono); font-size: .7rem; transition: all .4s;
+    }
+    .p-node.pending   { border-color: var(--accent4); color: var(--accent4); }
+    .p-node.fulfilled { border-color: var(--accent5); color: var(--accent5); background: rgba(6,214,160,.08); }
+    .p-node.rejected  { border-color: var(--accent3); color: var(--accent3); background: rgba(255,107,107,.08); }
+    .p-arrow { color: var(--muted); font-size: 1.1rem; }
+
+    /* ASYNC TIMELINE */
+    .timeline {
+      position: relative; padding-left: 2rem;
+      display: flex; flex-direction: column; gap: .85rem;
+    }
+    .timeline::before { content: ''; position: absolute; left: .5rem; top: 0; bottom: 0; width: 2px; background: var(--border); }
+    .tl-step {
+      position: relative; padding: .7rem 1rem;
+      background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
+      font-family: var(--font-mono); font-size: .74rem; transition: all .4s;
+    }
+    .tl-step::before { content: ''; position: absolute; left: -1.65rem; top: 50%; transform: translateY(-50%); width: 10px; height: 10px; border-radius: 50%; background: var(--border); border: 2px solid var(--bg); transition: background .4s; }
+    .tl-step.active { border-color: var(--accent1); color: var(--accent1); }
+    .tl-step.active::before { background: var(--accent1); }
+    .tl-step.done   { border-color: var(--accent5); color: var(--accent5); }
+    .tl-step.done::before   { background: var(--accent5); }
+
+    /* MODULES DIAGRAM */
+    .modules-diagram {
+      display: flex;
+      align-items: stretch;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .mod-box { flex: 1 1 200px; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 1rem; }
+    .mod-box .mod-title { font-size: .8rem; font-weight: 700; margin-bottom: .5rem; }
+    .mod-arrow { flex: 0 0 50px; display: flex; align-items: center; justify-content: center; font-family: var(--font-mono); font-size: .9rem; color: var(--accent1); }
+
+    /* TEMPLATE LITERAL BUILDER */
+    .tl-inputs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .75rem;
+      margin-bottom: .75rem;
+    }
+    .tl-input {
+      flex: 1 1 180px;
+      background: var(--surface); border: 1px solid var(--border); border-radius: 6px;
+      padding: .6rem .9rem; font-family: var(--font-mono); font-size: .8rem;
+      color: var(--text); outline: none; transition: border-color .2s;
+    }
+    .tl-input:focus { border-color: var(--accent1); }
+    .tl-result {
+      padding: 1rem; background: #0a0a0f; border: 1px solid var(--border);
+      border-radius: 8px; font-family: var(--font-mono); font-size: .84rem;
+      color: var(--accent4); white-space: pre-wrap;
+    }
+
+    /* FOOTER */
+    footer {
+      position: relative; z-index: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 3rem 2rem;
+      border-top: 1px solid var(--border);
+      font-family: var(--font-mono); font-size: .72rem; color: var(--muted); text-align: center;
+    }
+
+    /* ANIMATIONS */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes bounce {
+      0%,100% { transform: translateY(0); }
+      50%     { transform: translateY(8px); }
+    }
+    .reveal { opacity: 0; transform: translateY(30px); transition: opacity .6s ease, transform .6s ease; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    /* RESPONSIVE */
+    @media (max-width: 768px) { .nav-links { display: none; } }
+    @media (max-width: 480px) {
+      .promise-flow { flex-direction: column; }
+      .p-arrow { transform: rotate(90deg); }
+      .modules-diagram { flex-direction: column; }
+      .mod-arrow { transform: rotate(90deg); }
+    }
+  </style>
 </head>
-
 <body>
 
 <!-- NAV -->
 <nav>
-<div class="nav-logo">ES<span>6</span>.js</div>
-
-<ul class="nav-links">
-<li><a href="#arrow">Arrow Fn</a></li>
-<li><a href="#promises">Promises</a></li>
-<li><a href="#async">Async/Await</a></li>
-<li><a href="#destruct">Destruct</a></li>
-<li><a href="#modules">Modules</a></li>
-<li><a href="#template">Template</a></li>
-</ul>
-
-<span class="nav-badge">ES2015+</span>
+  <div class="nav-logo">ES<span>6</span>.js</div>
+  <ul class="nav-links">
+    <li><a href="#arrow">Arrow Fn</a></li>
+    <li><a href="#promises">Promises</a></li>
+    <li><a href="#async">Async/Await</a></li>
+    <li><a href="#destruct">Destruct</a></li>
+    <li><a href="#modules">Modules</a></li>
+    <li><a href="#template">Template</a></li>
+  </ul>
+  <span class="nav-badge">ES2015+</span>
 </nav>
 
 <!-- HERO -->
 <section class="hero">
-<p class="hero-tag">Advanced JavaScript</p>
-
-<h1>
-Modern <span class="hl">ES6</span><br>
-<span class="hl2">Features</span> Showcase
-</h1>
-
-<p class="hero-sub">
-An interactive guide to ECMAScript 2015+ — live demos, code examples, and visual explanations.
-</p>
-
-<div class="hero-chips">
-<span class="chip">Arrow Functions</span>
-<span class="chip">Promises</span>
-<span class="chip">Async / Await</span>
-<span class="chip">Destructuring</span>
-<span class="chip">Modules</span>
-<span class="chip">Template Literals</span>
-</div>
-
-<p class="hero-scroll">↓ scroll to explore</p>
+  <p class="hero-tag">Advanced JavaScript</p>
+  <h1>Modern <span class="hl">ES6</span><br/><span class="hl2">Features</span> Showcase</h1>
+  <p class="hero-sub">An interactive guide to ECMAScript 2015+ — live demos, code examples, and visual explanations.</p>
+  <div class="hero-chips">
+    <span class="chip">Arrow Functions</span>
+    <span class="chip">Promises</span>
+    <span class="chip">Async / Await</span>
+    <span class="chip">Destructuring</span>
+    <span class="chip">Modules</span>
+    <span class="chip">Template Literals</span>
+  </div>
+  <p class="hero-scroll">↓ scroll to explore</p>
 </section>
 
-
-<!-- ARROW FUNCTIONS -->
+<!-- 1. ARROW FUNCTIONS -->
 <section class="section reveal" id="arrow">
+  <div class="section-header">
+    <p class="section-label">Feature 01</p>
+    <h2 class="section-title">Arrow Functions</h2>
+    <p class="section-desc">Concise syntax for function expressions with lexical <code>this</code> binding.</p>
+  </div>
+  <div class="card-row">
+    <div class="card">
+      <div class="card-icon">⚡</div>
+      <div class="card-title">Syntax Comparison</div>
+      <div class="card-desc">Traditional vs arrow function syntax</div>
+      <div class="code-block"><span class="cm">// Traditional</span>
+<span class="kw">function</span> <span class="fn">add</span>(a, b) { <span class="kw">return</span> a + b; }
 
-<p class="section-label">Feature 01</p>
-<h2 class="section-title">Arrow Functions</h2>
+<span class="cm">// Arrow — implicit return</span>
+<span class="kw">const</span> add = (a, b) <span class="op">=&gt;</span> a + b;
 
-<p class="section-desc">
-Concise syntax for function expressions with lexical <code>this</code>.
-</p>
+<span class="cm">// Single param — no parens</span>
+<span class="kw">const</span> square = n <span class="op">=&gt;</span> n * n;
 
-<div class="output-box" id="arrow-out">Click Run to see output...</div>
-<button class="run-btn" onclick="runArrow()">▶ Run</button>
-
+<span class="cm">// No params</span>
+<span class="kw">const</span> greet = () <span class="op">=&gt;</span> <span class="str">"Hello!"</span>;</div>
+    </div>
+    <div class="card">
+      <div class="card-icon">🎯</div>
+      <div class="card-title">Lexical <code>this</code></div>
+      <div class="card-desc">Arrow functions inherit <code>this</code> from the enclosing scope</div>
+      <div class="code-block"><span class="kw">class</span> <span class="fn">Timer</span> {
+  <span class="fn">constructor</span>() {
+    <span class="kw">this</span>.seconds = <span class="num">0</span>;
+  }
+  <span class="fn">start</span>() {
+    <span class="cm">// 'this' stays correct ✓</span>
+    setInterval(<span class="op">=&gt;</span> {
+      <span class="kw">this</span>.seconds++;
+    }, <span class="num">1000</span>);
+  }
+}</div>
+    </div>
+    <div class="card">
+      <div class="card-icon">🔧</div>
+      <div class="card-title">Live Demo</div>
+      <div class="card-desc">Run arrow functions in real-time</div>
+      <div class="output-box" id="arrow-out">Click Run to see output…</div>
+      <button class="run-btn" onclick="runArrow()">▶ Run</button>
+    </div>
+  </div>
 </section>
 
-
-<!-- PROMISES -->
+<!-- 2. PROMISES -->
 <section class="section reveal" id="promises">
+  <div class="section-header">
+    <p class="section-label">Feature 02</p>
+    <h2 class="section-title">Promises</h2>
+    <p class="section-desc">Handle asynchronous operations with a clean, chainable API.</p>
+  </div>
+  <div class="promise-flow">
+    <div class="p-node pending" id="pn1">⏳ Pending<br/><small>Initial state</small></div>
+    <div class="p-arrow">→</div>
+    <div class="p-node" id="pn2">✅ Fulfilled<br/><small>Success</small></div>
+    <div class="p-arrow">→</div>
+    <div class="p-node" id="pn3">❌ Rejected<br/><small>Error</small></div>
+  </div>
+  <div class="card-row">
+    <div class="card">
+      <div class="card-icon">📜</div>
+      <div class="card-title">Creating Promises</div>
+      <div class="code-block"><span class="kw">const</span> fetchData = <span class="kw">new</span> <span class="fn">Promise</span>((resolve, reject) <span class="op">=&gt;</span> {
+  setTimeout(() <span class="op">=&gt;</span> {
+    <span class="kw">const</span> ok = Math.random() > <span class="num">0.3</span>;
+    ok ? resolve({ data: <span class="str">"✓ Success!"</span> })
+       : reject(<span class="kw">new</span> Error(<span class="str">"✗ Failed"</span>));
+  }, <span class="num">1000</span>);
+});
 
-<p class="section-label">Feature 02</p>
-<h2 class="section-title">Promises</h2>
+fetchData
+  .then(res  <span class="op">=&gt;</span> console.log(res.data))
+  .catch(err <span class="op">=&gt;</span> console.error(err.message))
+  .finally(() <span class="op">=&gt;</span> console.log(<span class="str">"Done"</span>));</div>
+    </div>
+    <div class="card">
+      <div class="card-icon">🔗</div>
+      <div class="card-title">Chaining & Promise.all</div>
+      <div class="code-block"><span class="cm">// Sequential chain</span>
+<span class="fn">getUser</span>(<span class="num">1</span>)
+  .then(user  <span class="op">=&gt;</span> <span class="fn">getPosts</span>(user.id))
+  .then(posts <span class="op">=&gt;</span> <span class="fn">render</span>(posts))
+  .catch(err  <span class="op">=&gt;</span> console.error(err));
 
-<div class="promise-flow">
-
-<div class="p-node pending" id="pn1">⏳ Pending</div>
-<div class="p-arrow">→</div>
-<div class="p-node" id="pn2">✅ Fulfilled</div>
-<div class="p-arrow">→</div>
-<div class="p-node" id="pn3">❌ Rejected</div>
-
-</div>
-
-<div class="output-box" id="promise-out">
-Click to simulate a Promise...
-</div>
-
-<button class="run-btn" onclick="runPromise()">
-▶ Simulate Promise
-</button>
-
+<span class="cm">// Parallel execution</span>
+Promise.<span class="fn">all</span>([
+  <span class="fn">fetchUsers</span>(),
+  <span class="fn">fetchProducts</span>(),
+]).then(([users, products]) <span class="op">=&gt;</span> {
+  <span class="cm">// Both resolved ✓</span>
+});</div>
+    </div>
+    <div class="card">
+      <div class="card-icon">🎬</div>
+      <div class="card-title">Simulate a Promise</div>
+      <div class="card-desc">30% chance of rejection — try a few times!</div>
+      <div class="output-box" id="promise-out">Click to simulate…</div>
+      <button class="run-btn" onclick="runPromise()">▶ Simulate</button>
+    </div>
+  </div>
 </section>
 
-
-<!-- ASYNC AWAIT -->
+<!-- 3. ASYNC / AWAIT -->
 <section class="section reveal" id="async">
+  <div class="section-header">
+    <p class="section-label">Feature 03</p>
+    <h2 class="section-title">Async / Await</h2>
+    <p class="section-desc">Write asynchronous code that reads like synchronous code — built on Promises.</p>
+  </div>
+  <div class="card-row">
+    <div class="card">
+      <div class="card-icon">⏳</div>
+      <div class="card-title">Async/Await Syntax</div>
+      <div class="code-block"><span class="kw">async function</span> <span class="fn">loadUser</span>(id) {
+  <span class="kw">try</span> {
+    <span class="kw">const</span> user  = <span class="kw">await</span> <span class="fn">fetchUser</span>(id);
+    <span class="kw">const</span> posts = <span class="kw">await</span> <span class="fn">fetchPosts</span>(user.id);
+    <span class="kw">return</span> { user, posts };
+  } <span class="kw">catch</span> (err) {
+    console.error(<span class="str">`Error: </span><span class="op">${</span>err.message<span class="op">}</span><span class="str">`</span>);
+  }
+}
 
-<p class="section-label">Feature 03</p>
-<h2 class="section-title">Async / Await</h2>
-
-<div class="timeline">
-
-<div class="tl-step" id="step1">1. Fetch user...</div>
-<div class="tl-step" id="step2">2. Fetch posts...</div>
-<div class="tl-step" id="step3">3. Fetch comments...</div>
-<div class="tl-step" id="step4">4. Done</div>
-
-</div>
-
-<button class="run-btn" onclick="runAsync()">
-▶ Run Async Flow
-</button>
-
+<span class="cm">// Parallel with await</span>
+<span class="kw">const</span> [a, b] = <span class="kw">await</span> Promise.<span class="fn">all</span>([
+  <span class="fn">taskA</span>(), <span class="fn">taskB</span>()
+]);</div>
+    </div>
+    <div class="card">
+      <div class="card-icon">🎬</div>
+      <div class="card-title">Execution Timeline</div>
+      <div class="card-desc">Watch async steps execute one by one</div>
+      <div class="timeline">
+        <div class="tl-step" id="step1">1. Calling fetchUser(1)…</div>
+        <div class="tl-step" id="step2">2. User loaded — fetching posts…</div>
+        <div class="tl-step" id="step3">3. Posts loaded — fetching comments…</div>
+        <div class="tl-step" id="step4">4. ✅ All data loaded!</div>
+      </div>
+      <button class="run-btn" onclick="runAsync()">▶ Run Flow</button>
+    </div>
+  </div>
 </section>
 
-
-<!-- DESTRUCTURING -->
+<!-- 4. DESTRUCTURING -->
 <section class="section reveal" id="destruct">
-
-<p class="section-label">Feature 04</p>
-<h2 class="section-title">Destructuring</h2>
-
-<div class="output-box" id="destruct-out">
-Click to destructure...
-</div>
-
-<button class="run-btn" onclick="runDestruct()">
-▶ Run Demo
-</button>
-
+  <div class="section-header">
+    <p class="section-label">Feature 04</p>
+    <h2 class="section-title">Destructuring</h2>
+    <p class="section-desc">Extract values from arrays and objects into variables with elegant syntax.</p>
+  </div>
+  <div class="card-row">
+    <div class="card">
+      <div class="card-icon">📦</div>
+      <div class="card-title">Object Destructuring</div>
+      <div class="code-block"><span class="kw">const</span> user = {
+  name: <span class="str">"Keanu"</span>, age: <span class="num">39</span>,
+  address: { city: <span class="str">"NYC"</span> }
+};
+<span class="cm">// Extract & rename</span>
+<span class="kw">const</span> { name: fullName, age } = user;
+<span class="cm">// Nested + default</span>
+<span class="kw">const</span> { address: { city }, role = <span class="str">"user"</span> } = user;
+<span class="cm">// Rest pattern</span>
+<span class="kw">const</span> { name, ...rest } = user;</div>
+    </div>
+    <div class="card">
+      <div class="card-icon">🗂️</div>
+      <div class="card-title">Array Destructuring</div>
+      <div class="code-block"><span class="kw">const</span> rgb = [<span class="str">"red"</span>, <span class="str">"green"</span>, <span class="str">"blue"</span>];
+<span class="cm">// Basic</span>
+<span class="kw">const</span> [first, second] = rgb;
+<span class="cm">// Skip elements</span>
+<span class="kw">const</span> [,, third] = rgb;
+<span class="cm">// Swap variables!</span>
+<span class="kw">let</span> a = <span class="num">1</span>, b = <span class="num">2</span>;
+[a, b] = [b, a];
+<span class="cm">// Default + rest</span>
+<span class="kw">const</span> [x = <span class="num">10</span>, ...others] = [<span class="num">5</span>, <span class="num">20</span>, <span class="num">30</span>];</div>
+    </div>
+    <div class="card">
+      <div class="card-icon">🔀</div>
+      <div class="card-title">Function Params</div>
+      <div class="code-block"><span class="cm">// Destructure in params</span>
+<span class="kw">function</span> <span class="fn">greet</span>({ name, age = <span class="num">18</span> }) {
+  <span class="kw">return</span> <span class="str">`Hi ${name}, age ${age}`</span>;
+}
+<span class="cm">// Array param</span>
+<span class="kw">const</span> first = ([a]) <span class="op">=&gt;</span> a;
+<span class="cm">// Mixed nesting</span>
+<span class="kw">const</span> coords = ({ pos: [x, y] }) <span class="op">=&gt;</span>
+  <span class="str">`x:${x} y:${y}`</span>;</div>
+    </div>
+    <div class="card">
+      <div class="card-icon">🎮</div>
+      <div class="card-title">Live Demo</div>
+      <div class="card-desc">Object, array, swap, rest — all at once</div>
+      <div class="output-box" id="destruct-out">Click to destructure…</div>
+      <button class="run-btn" onclick="runDestruct()">▶ Run Demo</button>
+    </div>
+  </div>
 </section>
 
+<!-- 5. MODULES -->
+<section class="section reveal" id="modules">
+  <div class="section-header">
+    <p class="section-label">Feature 05</p>
+    <h2 class="section-title">Modules</h2>
+    <p class="section-desc">Split code into reusable, encapsulated files with import/export syntax.</p>
+  </div>
+  <div class="modules-diagram">
+    <div class="mod-box" style="border-color:var(--accent2)">
+      <div class="mod-title" style="color:var(--accent2)">📁 math.js</div>
+      <div class="code-block" style="font-size:.65rem"><span class="kw">export const</span> add = (a,b) <span class="op">=&gt;</span> a+b;
+<span class="kw">export const</span> PI  = <span class="num">3.14159</span>;
+<span class="kw">export default class</span> <span class="fn">MathLib</span> {};</div>
+    </div>
+    <div class="mod-arrow">→</div>
+    <div class="mod-box" style="border-color:var(--accent1)">
+      <div class="mod-title" style="color:var(--accent1)">📁 app.js</div>
+      <div class="code-block" style="font-size:.65rem"><span class="kw">import</span> MathLib, { add, PI }
+  <span class="kw">from</span> <span class="str">'./math.js'</span>;
 
-<!-- TEMPLATE LITERALS -->
+add(<span class="num">2</span>, <span class="num">3</span>); <span class="cm">// 5</span>
+PI;        <span class="cm">// 3.14159</span></div>
+    </div>
+  </div>
+  <div class="card-row">
+    <div class="card">
+      <div class="card-icon">📤</div>
+      <div class="card-title">Export Types</div>
+      <div class="code-block"><span class="cm">// Named exports</span>
+<span class="kw">export const</span> PI = <span class="num">3.14159</span>;
+<span class="kw">export function</span> <span class="fn">square</span>(x) { <span class="kw">return</span> x*x; }
+<span class="kw">export class</span> <span class="fn">Vector</span> { ... }
+
+<span class="cm">// Default (one per file)</span>
+<span class="kw">export default function</span> <span class="fn">main</span>() { ... }
+
+<span class="cm">// Re-export</span>
+<span class="kw">export</span> { foo } <span class="kw">from</span> <span class="str">'./foo.js'</span>;</div>
+    </div>
+    <div class="card">
+      <div class="card-icon">📥</div>
+      <div class="card-title">Import Patterns</div>
+      <div class="code-block"><span class="cm">// Named</span>
+<span class="kw">import</span> { PI, square } <span class="kw">from</span> <span class="str">'./math.js'</span>;
+
+<span class="cm">// Alias</span>
+<span class="kw">import</span> { square <span class="kw">as</span> sq } <span class="kw">from</span> <span class="str">'./math.js'</span>;
+
+<span class="cm">// Namespace</span>
+<span class="kw">import</span> * <span class="kw">as</span> MathLib <span class="kw">from</span> <span class="str">'./math.js'</span>;
+
+<span class="cm">// Dynamic</span>
+<span class="kw">const</span> mod = <span class="kw">await import</span>(<span class="str">'./module.js'</span>);</div>
+    </div>
+  </div>
+</section>
+
+<!-- 6. TEMPLATE LITERALS -->
 <section class="section reveal" id="template">
+  <div class="section-header">
+    <p class="section-label">Feature 06</p>
+    <h2 class="section-title">Template Literals</h2>
+    <p class="section-desc">Multi-line strings with embedded expressions using backtick syntax.</p>
+  </div>
+  <div class="card-row">
+    <div class="card">
+      <div class="card-icon">📝</div>
+      <div class="card-title">Basic & Multi-line</div>
+      <div class="code-block"><span class="kw">const</span> name = <span class="str">"World"</span>;
 
-<p class="section-label">Feature 06</p>
-<h2 class="section-title">Template Literals</h2>
+<span class="cm">// Interpolation</span>
+<span class="kw">const</span> msg = <span class="str">`Hello, </span><span class="op">${</span>name<span class="op">}</span><span class="str">!`</span>;
 
-<div class="tl-builder">
+<span class="cm">// Expression inside ${ }</span>
+<span class="kw">const</span> tax = <span class="str">`Tax: </span><span class="op">${</span>(price * <span class="num">1.2</span>).toFixed(<span class="num">2</span>)<span class="op">}</span><span class="str">`</span>;
 
-<div class="tl-inputs">
+<span class="cm">// Multi-line — no \n needed</span>
+<span class="kw">const</span> html = <span class="str">`
+  &lt;div&gt;
+    &lt;h1&gt;</span><span class="op">${</span>title<span class="op">}</span><span class="str">&lt;/h1&gt;
+  &lt;/div&gt;
+`</span>;</div>
+    </div>
+    <div class="card">
+      <div class="card-icon">🏷️</div>
+      <div class="card-title">Tagged Templates</div>
+      <div class="code-block"><span class="cm">// Custom tag function</span>
+<span class="kw">function</span> <span class="fn">highlight</span>(strings, ...vals) {
+  <span class="kw">return</span> strings.<span class="fn">reduce</span>((acc, str, i) <span class="op">=&gt;</span>
+    acc + str + (vals[i]
+      ? <span class="str">`&lt;mark&gt;</span><span class="op">${</span>vals[i]<span class="op">}</span><span class="str">&lt;/mark&gt;`</span>
+      : <span class="str">""</span>
+    ), <span class="str">""</span>
+  );
+}
 
-<input class="tl-input" id="tl-name" placeholder="Your name" oninput="updateTemplate()" value="Alex">
-
-<input class="tl-input" id="tl-role" placeholder="Your role" oninput="updateTemplate()" value="Developer">
-
-<input class="tl-input" id="tl-lang" placeholder="Fav language" oninput="updateTemplate()" value="JavaScript">
-
-<input class="tl-input" id="tl-year" placeholder="Year" oninput="updateTemplate()" value="2025">
-
-</div>
-
-<div class="tl-result" id="tl-result"></div>
-
-</div>
-
+highlight<span class="str">`Hello </span><span class="op">${</span>name<span class="op">}</span><span class="str">, age </span><span class="op">${</span>age<span class="op">}</span><span class="str">.`</span>;</div>
+    </div>
+    <div class="card full">
+      <div class="card-icon">🎨</div>
+      <div class="card-title">Live Template Literal Builder</div>
+      <div class="card-desc">Type values and watch the template update instantly</div>
+      <div class="tl-inputs">
+        <input class="tl-input" id="tl-name" placeholder="Your name"      oninput="updateTemplate()" value="Alex"/>
+        <input class="tl-input" id="tl-role" placeholder="Your role"      oninput="updateTemplate()" value="Developer"/>
+        <input class="tl-input" id="tl-lang" placeholder="Fav language"   oninput="updateTemplate()" value="JavaScript"/>
+        <input class="tl-input" id="tl-year" placeholder="Started coding" oninput="updateTemplate()" value="2020"/>
+      </div>
+      <div class="tl-result" id="tl-result"></div>
+    </div>
+  </div>
 </section>
 
-
+<!-- FOOTER -->
 <footer>
-<p>
-ES6 Features Showcase · Arrow Functions · Promises · Async/Await · Destructuring · Modules · Template Literals
-</p>
+  <p>ES6 Features Showcase &nbsp;·&nbsp; Arrow Functions · Promises · Async/Await · Destructuring · Modules · Template Literals</p>
 </footer>
 
-<script src="script.js"></script>
+<script>
+  /* Scroll reveal */
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
+  /* 1. Arrow Functions */
+  const runArrow = () => {
+    const add    = (a, b) => a + b;
+    const square = n => n * n;
+    const greet  = name => `Hello, ${name}!`;
+    const evens  = arr => arr.filter(n => n % 2 === 0);
+    const sumAll = (...nums) => nums.reduce((acc, n) => acc + n, 0);
+    document.getElementById('arrow-out').textContent =
+      `add(3, 4)         → ${add(3, 4)}\n` +
+      `square(7)         → ${square(7)}\n` +
+      `greet("World")    → ${greet("World")}\n` +
+      `evens([1..8])     → [${evens([1,2,3,4,5,6,7,8])}]\n` +
+      `sumAll(1,2,3,4,5) → ${sumAll(1,2,3,4,5)}`;
+  };
+
+  /* 2. Promises */
+  const simulateAPI = (label, ms, fail = false) =>
+    new Promise((resolve, reject) =>
+      setTimeout(() => fail
+        ? reject(new Error(`${label} failed`))
+        : resolve(`${label} ✓`), ms)
+    );
+
+  const runPromise = async () => {
+    const out = document.getElementById('promise-out');
+    const nodes = ['pn1','pn2','pn3'].map(id => document.getElementById(id));
+    nodes.forEach(n => n.classList.remove('fulfilled','rejected','pending'));
+    nodes[0].classList.add('pending');
+    out.textContent = '⏳ Promise pending…';
+    try {
+      const result = await simulateAPI('Data fetch', 1200, Math.random() < 0.3);
+      nodes[1].classList.add('fulfilled');
+      out.textContent = `✅ Resolved: ${result}\n.then() → processing…\n✅ All done!`;
+    } catch (err) {
+      nodes[2].classList.add('rejected');
+      out.textContent = `❌ Rejected: ${err.message}\n.catch() handled it gracefully.`;
+    }
+  };
+
+  /* 3. Async/Await */
+  const delay = ms => new Promise(r => setTimeout(r, ms));
+  const runAsync = async () => {
+    const ids = ['step1','step2','step3','step4'];
+    ids.forEach(id => document.getElementById(id).classList.remove('active','done'));
+    for (const id of ids) {
+      const el = document.getElementById(id);
+      el.classList.add('active');
+      await delay(700);
+      el.classList.replace('active','done');
+    }
+  };
+
+  /* 4. Destructuring */
+  const runDestruct = () => {
+    const { name: devName, skills: [primary] = ['JS'], meta: { level = 'Junior' } = {} } =
+      { name: 'Alex', skills: ['JavaScript', 'React'], meta: { level: 'Senior' } };
+    let x = 42, y = 99;
+    [x, y] = [y, x];
+    const [first, ...rest] = [10, 20, 30, 40, 50];
+    const getInfo = ({ title, author: { name: aName } }) => `${title} by ${aName}`;
+    const bookInfo = getInfo({ title: "You Don't Know JS", author: { name: 'Kyle Simpson' } });
+    document.getElementById('destruct-out').textContent =
+      `Object:  devName="${devName}", primary="${primary}", level="${level}"\n` +
+      `Swap:    x=${x}, y=${y}  (were 42 and 99)\n` +
+      `Rest:    first=${first}, rest=[${rest}]\n` +
+      `Params:  "${bookInfo}"`;
+  };
+
+  /* 6. Template Literals */
+  const updateTemplate = () => {
+    const name = document.getElementById('tl-name').value || 'Developer';
+    const role = document.getElementById('tl-role').value || 'Coder';
+    const lang = document.getElementById('tl-lang').value || 'JS';
+    const year = parseInt(document.getElementById('tl-year').value) || 2020;
+    const exp  = new Date().getFullYear() - year;
+    const sum  = lang.split('').reduce((a, c) => a + c.charCodeAt(0), 0);
+    document.getElementById('tl-result').textContent =
+      `\`Hello, I'm \${name}!\`\n\n` +
+      `→ "Hi ${name}, you're a ${role} who loves ${lang}."\n` +
+      `→ "Since ${year}, that's ${Math.max(0,exp)} year(s) of experience!"\n` +
+      `→ "Char sum of '${lang}' = ${sum}"`;
+  };
+  updateTemplate();
+</script>
 </body>
 </html>
